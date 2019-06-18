@@ -2,6 +2,7 @@ const { byAid } = require("./utils");
 
 const PUSH_BUTTON_SELECTOR = byAid("top-bar-button-local-push");
 const ADD_ELEMENT_SELECTOR = ".add-panel";
+const ERROR_CODE_MESSAGE_SELECTOR = ".error-code";
 const ADD_TEXT_SELECTOR = ".add-panel-category-list .text";
 const THEMED_TEXTS_SELECTOR =
   '[data-section-title="Themed Text"] .live-text span';
@@ -12,6 +13,9 @@ module.exports = page => {
 
   const waitForLoginForm = async () =>
     await page.waitForSelector(".log-in-title");
+
+  const waitForErrorPage = async () =>
+    await page.waitForSelector(ERROR_CODE_MESSAGE_SELECTOR);
 
   const close = async () => await page.close();
 
@@ -35,11 +39,16 @@ module.exports = page => {
     await loginButton.click();
   };
 
+  const getErrorCode = async () =>
+    await page.$eval(ERROR_CODE_MESSAGE_SELECTOR, el => el.innerText);
+
   return {
     waitForEditor,
     waitForLoginForm,
+    waitForErrorPage,
     push,
     addTextElement,
+    getErrorCode,
     login,
     close
   };

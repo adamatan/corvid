@@ -1,12 +1,10 @@
 const execa = require("execa");
 const which = require("npm-which")(__dirname);
+const { parseCommandArgs } = require("./utils");
 
 const CORVID_BIN_PATH = which.sync("corvid");
 
 module.exports = ({ cwd }) => {
-  const parseCommandArgs = ({ remoteDebuggingPort } = {}) =>
-    remoteDebuggingPort ? `--remote-debugging-port=${remoteDebuggingPort}` : "";
-
   const login = ({ remoteDebuggingPort } = {}) => {
     const query = parseCommandArgs({ remoteDebuggingPort });
     return execa.shell(`${CORVID_BIN_PATH} login ${query}`, { cwd });
@@ -14,8 +12,15 @@ module.exports = ({ cwd }) => {
 
   const logout = () => execa.shell(`${CORVID_BIN_PATH} logout`, { cwd });
 
-  const clone = ({ editorUrl, remoteDebuggingPort } = {}) => {
-    const query = parseCommandArgs({ remoteDebuggingPort });
+  const clone = ({
+    editorUrl,
+    loginRemoteDebuggingPort,
+    pullRemoteDebuggingPort
+  } = {}) => {
+    const query = parseCommandArgs({
+      loginRemoteDebuggingPort,
+      pullRemoteDebuggingPort
+    });
     return execa.shell(`${CORVID_BIN_PATH} clone ${query} "${editorUrl}"`, {
       cwd
     });
